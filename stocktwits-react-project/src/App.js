@@ -6,16 +6,30 @@ import Tweets from "./Components/Tweets.js"
 import WatchList from "./Components/WatchList"
 
 
+
+
 class App extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
         userTickers: [],
-        thirdPartyAPI: {
-          
-        },
-        placeholder: true,
+        thirdPartyAPI: []
         }
+    }
+    checkForUpdates = () => {
+      let promiseArr = []; 
+        for(let i=0; i<this.state.userTickers.length; i++){
+          promiseArr.push(fetch(`https://api.stocktwits.com/api/2/streams/symbol/${this.state.userTickers[i]}.json`).body)
+          // promiseArr.push(i)
+        }
+        Promise.all(promiseArr).then((results) => {
+          for(let i =0; i<results.length; i++){
+            console.log(results[i])
+          }
+          // this.setState({
+          //   thirdPartyAPI: [results]
+          // })
+        })
     }
     updateTickers = (temp) => {
       //Seperate mulitple stocks if multiple entered
@@ -60,6 +74,7 @@ class App extends React.Component {
       )
     }
     }
+    this.checkForUpdates();
   }
   removeTicker = (targetId) => {
     console.log(targetId.target.value);
@@ -68,36 +83,27 @@ class App extends React.Component {
       userTickers: updatedState
     })
   }
+
     render(){
-      if(this.state.placeholder){
-    return (
-      <div className="App">
+        return (
+          <div className="App">
       <MDBContainer fluid>
         <AddTicker updateTicker={this.updateTickers}  />
         {/*  conditional render if no items in watch list tell user to add items else } */}
         {this.state.userTickers.map(item => 
           <WatchList key={this.state.userTickers.indexOf(item)} tickers={item} removeTicker={this.removeTicker} />)
           }
+          {this.state.thirdPartyAPI ? "Loading tweets": "Add something to your watchlist to view tweets"}
           {/* {
             this.state.thirdPartyAPI.tweets.map(tweet => 
               <Tweets props={tweet} />
               )
           } */}
-          <p>Lorem ipsum</p>
-          <p>Random Copyright stuff here</p>
+      {this.state.userTickers.length>0 ? setTimeout(this.checkForUpdates, 10000) : "boo"}
       </MDBContainer>
     </div>
   );
       }
-      // If state hasnt loaded yet show loading icon
-      else {
-        return ( 
-          <div className="App">
-            <h1>Loading</h1>
-          </div>
-        )
-      }
-} 
 }
 
 export default App;
