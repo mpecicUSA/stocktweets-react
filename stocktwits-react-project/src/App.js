@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import {MDBContainer} from "mdbreact"
+import {MDBContainer, MDBRow, MDBCol} from "mdbreact"
 import AddTicker from "./Components/AddTicker.js"
 import Tweets from "./Components/Tweets.js"
 import WatchList from "./Components/WatchList"
@@ -38,16 +38,12 @@ class App extends React.Component {
               console.log(err, link)
             });
         }
-        // this.setState(()=> ({
-        //   thirdPartyAPI: updated
-        // }))
   }
     updateTickers = (temp) => {
       //Seperate mulitple stocks if multiple entered
       let tempArr = temp.split('');
       let tempArrOfStocks = [];
       if(tempArr.includes(" ")){
-        console.log("tickers has multipole tickers")
         let tempString = "";
         for(let i=0; i<tempArr.length; i++){
           // if last letter in tempArr
@@ -68,7 +64,6 @@ class App extends React.Component {
           }
         }
       }else{
-        console.log("ticker only has 1 to add")
         // if only 1 ticker is being added set tempArrOfStocsk to an array of temp
         tempArrOfStocks = [temp.toUpperCase()]
       }
@@ -77,7 +72,6 @@ class App extends React.Component {
       if(this.state.userTickers.includes(tempArrOfStocks[i])){
         alert(`${tempArrOfStocks[i]} is already on your watch list...`);
       }else{
-        console.log("adding this to updated tickets", tempArrOfStocks[i])
       this.setState((state) => ({
         userTickers: [...state.userTickers, tempArrOfStocks[i]]
       })
@@ -100,19 +94,25 @@ class App extends React.Component {
           <div className="App">
       <MDBContainer fluid>
         <AddTicker updateTicker={this.updateTickers}  />
+
         {/*  conditional render if no items in watch list tell user to add items else } */}
         <p> {this.state.userTickers.length === 0 ? ["Your watchlist is empty... add something ^"] : "" } </p>
+        <MDBRow >
 
-            {this.state.userTickers.map(item => 
-              <WatchList key={this.state.userTickers.indexOf(item)} tickers={item} removeTicker={this.removeTicker} />)
-            }
+            {this.state.userTickers.map(item => (
+            <MDBCol >
+              <WatchList key={this.state.userTickers.indexOf(item)} tickers={item} messages={this.state.thirdPartyAPI.filter(message => message.symbol === item).length }removeTicker={this.removeTicker} />
+            </MDBCol>
+            )
+            )}
+        </MDBRow>
           {this.state.thirdPartyAPI.length >0 ? this.state.thirdPartyAPI.map(stock =>
 
             <Tweets key={stock.symbol.id} stock={stock.symbol} messages={stock.messages} />
 
-          ) : "no data "}
+          ) : " "}
 
-      {this.state.userTickers.length>0 ? setTimeout(() => this.checkForUpdates(), 90000) : " "}
+      {this.state.userTickers.length>0 ? setTimeout(() => this.checkForUpdates(), 90000) : ""}
       </MDBContainer>
     </div>
   );
