@@ -17,25 +17,32 @@ class App extends React.Component {
         }
     }
     checkForUpdates = () => {
-      let promiseArr = []; 
+        console.log("checking for updates running")
         for(let i=0; i<this.state.userTickers.length; i++){
-          promiseArr.push(fetch(`https://api.stocktwits.com/api/2/streams/symbol/${this.state.userTickers[i]}.json`).body)
-          // promiseArr.push(i)
+          let link = `https://api.stocktwits.com/api/2/streams/symbol/${this.state.userTickers[i]}.json`;
+          console.log(link)
+          fetch(link)
+            .then((res) => {
+              return res.json()
+            })
+            .then((data) => {
+                console.log(data);
+                this.setState({
+                  thirdPartyAPI: [...this.state.thirdPartyAPI, data]
+                })
+              })
+            .catch(err => {
+              console.log(err, link)
+            });
         }
-        Promise.all(promiseArr).then((results) => {
-          for(let i =0; i<results.length; i++){
-            console.log(results[i])
-          }
-          // this.setState({
-          //   thirdPartyAPI: [results]
-          // })
-        })
-    }
+        // this.setState(()=> ({
+        //   thirdPartyAPI: updated
+        // }))
+  }
     updateTickers = (temp) => {
       //Seperate mulitple stocks if multiple entered
       let tempArr = temp.split('');
       let tempArrOfStocks = [];
-      let updatedTickets
       if(tempArr.includes(" ")){
         console.log("tickers has multipole tickers")
         let tempString = "";
@@ -74,7 +81,7 @@ class App extends React.Component {
       )
     }
     }
-    this.checkForUpdates();
+    setTimeout(()=>this.checkForUpdates(), 2000);
   }
   removeTicker = (targetId) => {
     console.log(targetId.target.value);
@@ -90,16 +97,18 @@ class App extends React.Component {
       <MDBContainer fluid>
         <AddTicker updateTicker={this.updateTickers}  />
         {/*  conditional render if no items in watch list tell user to add items else } */}
-        {this.state.userTickers.map(item => 
-          <WatchList key={this.state.userTickers.indexOf(item)} tickers={item} removeTicker={this.removeTicker} />)
-          }
-          {this.state.thirdPartyAPI ? "Loading tweets": "Add something to your watchlist to view tweets"}
-          {/* {
-            this.state.thirdPartyAPI.tweets.map(tweet => 
-              <Tweets props={tweet} />
-              )
-          } */}
-      {this.state.userTickers.length>0 ? setTimeout(this.checkForUpdates, 10000) : "boo"}
+        <p> {this.state.userTickers.length === 0 ? ["Your watchlist is empty... add something ^"] : "" } </p>
+
+            {this.state.userTickers.map(item => 
+              <WatchList key={this.state.userTickers.indexOf(item)} tickers={item} removeTicker={this.removeTicker} />)
+            }
+          {this.state.thirdPartyAPI.length >0 ? this.state.thirdPartyAPI.map(stock =>
+
+            <Tweets key={stock.symbol.id} stock={stock.symbol} messages={stock.messages} />
+
+          ) : "no data "}
+
+      {/* {this.state.userTickers.length>0 ? setTimeout(() => this.checkForUpdates, 300000) : " "} */}
       </MDBContainer>
     </div>
   );
