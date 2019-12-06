@@ -57,7 +57,13 @@ class App extends React.Component {
     }
     }
   }
-      
+  removeTicker = (targetId) => {
+    console.log(targetId.target.value);
+    let updatedState = this.state.userTickers.filter(item => item != targetId.target.value)
+    this.setState({
+      userTickers: updatedState
+    })
+  }
     render(){
       if(this.state.placeholder){
     return (
@@ -66,7 +72,7 @@ class App extends React.Component {
         <AddTicker updateTicker={this.updateTickers}  />
         {/*  conditional render if no items in watch list tell user to add items else } */}
         {this.state.userTickers.map(item => 
-          <WatchList key={this.state.userTickers.indexOf(item)} tickers={item} />)
+          <WatchList key={this.state.userTickers.indexOf(item)} tickers={item} removeTicker={this.removeTicker} />)
           }
           {/* {
             this.state.thirdPartyAPI.tweets.map(tweet => 
