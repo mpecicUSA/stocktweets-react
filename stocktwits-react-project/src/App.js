@@ -18,6 +18,9 @@ class App extends React.Component {
     }
     checkForUpdates = () => {
         console.log("checking for updates running")
+        this.setState({
+          thirdPartyAPI: []
+        })
         for(let i=0; i<this.state.userTickers.length; i++){
           let link = `https://api.stocktwits.com/api/2/streams/symbol/${this.state.userTickers[i]}.json`;
           console.log(link)
@@ -89,6 +92,7 @@ class App extends React.Component {
     this.setState({
       userTickers: updatedState
     })
+    setTimeout(()=> this.checkForUpdates(), 1000)
   }
 
     render(){
@@ -108,7 +112,7 @@ class App extends React.Component {
 
           ) : "no data "}
 
-      {/* {this.state.userTickers.length>0 ? setTimeout(() => this.checkForUpdates, 300000) : " "} */}
+      {this.state.userTickers.length>0 ? setTimeout(() => this.checkForUpdates(), 90000) : " "}
       </MDBContainer>
     </div>
   );
