@@ -29,13 +29,17 @@ class App extends React.Component {
           // if last letter in tempArr
           if(i === tempArr.length-1){
             tempString += tempArr[i]
-            tempArrOfStocks.push(tempString.toUpperCase());
+            if(!tempArrOfStocks.includes(tempString.toUpperCase())){
+              tempArrOfStocks.push(tempString.toUpperCase());
+            }
           }else if(tempArr[i] !== " "){
             // if not space add to tempString
             tempString += tempArr[i]
           }else{
             //if space 
-            tempArrOfStocks.push(tempString.toUpperCase())
+            if(!tempArrOfStocks.includes(tempString.toUpperCase())){
+              tempArrOfStocks.push(tempString.toUpperCase());
+            }
             tempString = ""
           }
         }
