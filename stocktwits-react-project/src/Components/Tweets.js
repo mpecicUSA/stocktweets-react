@@ -1,14 +1,14 @@
 import React, { Component } from 'react'
+import Tweet from "./Tweet"
 
 export class Tweets extends Component {
     render() {
-        let {tickerName, price, tweet, tweeter} = this.props;
         return (
             <div>
-                <h1>Ticker Name {tickerName} </h1>
-                <h3>Price {price} </h3>
-                <p>Recent Tweet{tweet} </p>
-                <p>Person who tweeted // time stamp {tweeter} </p>
+                <h1>{this.props.stock.title} - {this.props.stock.symbol} - </h1>
+                {this.props.messages.map(message => 
+                <Tweet key={message.id} tweet={message} />
+                )}
             </div>
         )
     }
