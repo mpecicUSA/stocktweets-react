@@ -5,7 +5,7 @@ export class WatchList extends Component {
         return (
             <div>
                 <p>{this.props.tickers} - </p> <p>15</p>
-                <button>X</button>
+                <button onClick={this.props.removeTicker} value={this.props.tickers}>X</button>
             </div>
         )
     }
